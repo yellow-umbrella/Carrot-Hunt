@@ -7,6 +7,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private const string GRASS_TAG = "Grass";
+    private const string CARROT_TAG = "Carrot";
+
     [SerializeField] private float moveSpeed;
     public bool IsHidden { get; private set; } = false;
 
@@ -41,6 +43,10 @@ public class PlayerController : MonoBehaviour
         {
             IsHidden = true;
             Debug.Log("Rabbit is hidden now");
+        } else
+        {
+            GameManager.Instance.AddPoints(collision.tag);
+            Destroy(collision.gameObject);
         }
     }
 
