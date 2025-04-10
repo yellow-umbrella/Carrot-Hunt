@@ -18,7 +18,7 @@ TagManager:
   - Player
   - Enemies
   - Obstacles
-  - 
+  - Boundaries
   - 
   - 
   - 
@@ -47,4 +47,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 3089405885
     locked: 0

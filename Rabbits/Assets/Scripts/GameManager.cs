@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject player;
     [SerializeField] private Vector2 startingPosition;
+    [SerializeField] private CinemachineVirtualCamera cinemachine;
     private int score = 0;
     private GameObject currentPlayer;
 
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
         startMenu.SetActive(false);
         endMenu.SetActive(false);
         currentPlayer = Instantiate(player, startingPosition, Quaternion.identity);
+        cinemachine.Follow = currentPlayer.transform;
     }
 
     public void EndGame()
