@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public event Action OnGameReset;
+
     [SerializeField] private GameObject startMenu;
     [SerializeField] private GameObject endMenu;
     [SerializeField] private Text scoreText;
@@ -39,6 +42,7 @@ public class GameManager : MonoBehaviour
     {
         score = 0;
         UpdateScore();
+        OnGameReset?.Invoke();
         startMenu.SetActive(false);
         endMenu.SetActive(false);
         currentPlayer = Instantiate(player, startingPosition, Quaternion.identity);
@@ -53,6 +57,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         Debug.Log("Game over");
+        EndGame();
     }
 
     public void AddPoints(string tag)

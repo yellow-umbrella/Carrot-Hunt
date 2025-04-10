@@ -13,14 +13,6 @@ public class EnemyVision : MonoBehaviour
     private Mesh mesh;
     private EnemyMovement enemy;
 
-    private struct Gizmoray
-    {
-        public Vector2 gizmoStart;
-        public Vector2 gizmoDir;
-        public Vector2 point;
-    }
-    private List<Gizmoray> gizmos;
-
     private void Awake()
     {
         mesh = new Mesh();
@@ -32,8 +24,14 @@ public class EnemyVision : MonoBehaviour
         enemy = GetComponentInParent<EnemyMovement>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
+        if (enemy.IsChasing)
+        {
+            mesh.Clear();
+            return;
+        }
+        transform.right = enemy.CurrentDirrection;
         float currentAngle = angle / 2;
         float angleIncrease = angle / rayCount;
         Vector3 origin = Vector3.zero;
@@ -56,9 +54,12 @@ public class EnemyVision : MonoBehaviour
             Vector2 directionGlobal = Local2Global(direction, phi);
 
             RaycastHit2D raycastHit2D = Physics2D.Raycast(originGlobal, directionGlobal, range, obstaclesLayer | playerLayer);
-            if (raycastHit2D.collider != null && raycastHit2D.collider.gameObject.TryGetComponent(out PlayerController player) && !player.IsHidden)
+            if (raycastHit2D.collider?.attachedRigidbody != null)
             {
-                enemy.OnPlayerDetected(player);
+                if (raycastHit2D.collider.attachedRigidbody.gameObject.TryGetComponent(out PlayerController player) && !player.IsHidden)
+                {
+                    enemy.OnPlayerDetected(player);
+                }
             }
             raycastHit2D = Physics2D.Raycast(originGlobal, directionGlobal, range, obstaclesLayer);
 
@@ -99,6 +100,13 @@ public class EnemyVision : MonoBehaviour
                             local.x * Mathf.Sin(phi) + local.y * Mathf.Cos(phi));
     }
 
+    private struct Gizmoray
+    {
+        public Vector2 gizmoStart;
+        public Vector2 gizmoDir;
+        public Vector2 point;
+    }
+    private List<Gizmoray> gizmos;
     private void OnDrawGizmos()
     {
         if (gizmos == null) return;

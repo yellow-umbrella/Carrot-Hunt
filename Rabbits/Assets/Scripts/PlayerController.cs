@@ -7,16 +7,16 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private const string GRASS_TAG = "Grass";
-    private const string CARROT_TAG = "Carrot";
+    private const string ENEMY_TAG = "Enemy";
 
     [SerializeField] private float moveSpeed;
     public bool IsHidden { get; private set; } = false;
+    public Vector2 VelocityNormalized { get; private set; }
 
     private GameInput input;
     private Rigidbody2D playerRigidbody;
     private Collider2D playerCollider;
 
-    private Vector2 velocityNormalized;
 
     private void Awake()
     {
@@ -29,24 +29,26 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        velocityNormalized = input.Player.Movement.ReadValue<Vector2>().normalized;
+        VelocityNormalized = input.Player.Movement.ReadValue<Vector2>().normalized;
     }
 
     private void FixedUpdate()
     {
-        playerRigidbody.velocity = velocityNormalized * moveSpeed;
+        playerRigidbody.velocity = VelocityNormalized * moveSpeed;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == GRASS_TAG)
-        {
-            IsHidden = true;
-            Debug.Log("Rabbit is hidden now");
-        } else
-        {
-            GameManager.Instance.AddPoints(collision.tag);
-            Destroy(collision.gameObject);
+        switch (collision.tag) {
+            case GRASS_TAG:
+                IsHidden = true;
+                break;
+            case ENEMY_TAG:
+                GameManager.Instance.GameOver();
+                break;
+            default:
+                GameManager.Instance.AddPoints(collision.tag);
+                break;
         }
     }
 
