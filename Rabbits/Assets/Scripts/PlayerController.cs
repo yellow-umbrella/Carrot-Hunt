@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour
 {
     private const string GRASS_TAG = "Grass";
@@ -15,13 +14,12 @@ public class PlayerController : MonoBehaviour
 
     private GameInput input;
     private Rigidbody2D playerRigidbody;
-    private Collider2D playerCollider;
+    private int grass_count = 0;
 
 
     private void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody2D>();
-        playerCollider = GetComponent<Collider2D>();
 
         input = new GameInput();
         input.Player.Enable();
@@ -42,6 +40,7 @@ public class PlayerController : MonoBehaviour
         switch (collision.tag) {
             case GRASS_TAG:
                 IsHidden = true;
+                grass_count++;
                 break;
             case ENEMY_TAG:
                 GameManager.Instance.GameOver();
@@ -56,8 +55,12 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.tag == GRASS_TAG)
         {
-            IsHidden = false;
-            Debug.Log("Rabbit is not hidden");
+            grass_count--;
+            if (grass_count == 0)
+            {
+                IsHidden = false;
+                Debug.Log("Rabbit is not hidden");
+            }
         }
     }
 }
